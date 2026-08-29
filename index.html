@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0B1F3A">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Best Rate">
+  <title>Best Rate — Local Transfer to The Gambia</title>
+  <meta name="description" content="Request a UK to Gambia local transfer on WhatsApp. Check today's rate, choose a pickup point, and send your request.">
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/logo.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/logo.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Outfit:wght@700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="hero">
+      <div class="logo-row">
+        <img src="icons/logo.svg" alt="">
+        <div class="brand">BEST RATE</div>
+      </div>
+      <p class="tag">Local transfer · United Kingdom → The Gambia</p>
+      <div class="flags" aria-hidden="true">🇬🇧 🇬🇲</div>
+      <div class="pills">
+        <span class="pill">Fast pickup</span>
+        <span class="pill">Bank transfer</span>
+        <span class="pill">WhatsApp confirm</span>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Today’s rate</h2>
+      <label for="amount">You send</label>
+      <div class="amount-wrap">
+        <span>£</span>
+        <input id="amount" inputmode="decimal" type="number" min="1" max="100000" step="1" placeholder="2500" value="1000">
+      </div>
+      <p class="error" id="error"></p>
+      <div class="result">
+        <div>
+          <div class="k">Rate</div>
+          <div class="v" id="rateVal">94 GMD</div>
+        </div>
+        <div>
+          <div class="k">Band</div>
+          <div class="v" id="bandVal">£1 – £1,000</div>
+        </div>
+        <div class="full">
+          <div class="k">Receiver gets</div>
+          <div class="v big" id="gmdVal">D94,000</div>
+        </div>
+      </div>
+      <p class="hint">£1–1,000 = 94 · £1,000–5,000 = 95 · £5,000–10,000 = 96 · £10,000–100,000 = 97</p>
+    </section>
+
+    <section class="card">
+      <h2>Who is collecting</h2>
+      <label for="receiverName">Receiver name</label>
+      <input id="receiverName" autocomplete="name" placeholder="Name as used at pickup">
+      <label for="receiverPhone">Receiver WhatsApp / phone</label>
+      <input id="receiverPhone" inputmode="tel" autocomplete="tel" placeholder="220 7xx xxxx">
+
+      <label>Pickup in The Gambia</label>
+      <div class="locs" id="locations"></div>
+    </section>
+
+    <section class="account">
+      <h2>Pay from the UK</h2>
+      <div class="row"><span>Account name</span><b>UNILINX LIMITED</b></div>
+      <div class="row"><span>Sort code</span><b>23-11-85</b></div>
+      <div class="row"><span>Account number</span><b>13337904</b></div>
+      <div class="row"><span>Reference</span><b>shipping</b></div>
+      <button class="copy-btn" id="copyBtn" type="button">Copy account details</button>
+    </section>
+
+    <div class="actions">
+      <a class="wa-btn" id="waBtn" aria-disabled="true">WhatsApp this request</a>
+      <button class="secondary" id="paidBtn" type="button">I’ve paid — send receipt chat</button>
+    </div>
+
+    <p class="fine">
+      This page only prepares your request and opens WhatsApp. You pay by UK bank transfer to UNILINX LIMITED.
+      Cash is released after we confirm the payment. Not Sendwave, Wave or an app-store wallet.
+    </p>
+  </main>
+  <div class="toast" id="toast"></div>
+  <script src="js/app.js"></script>
+</body>
+</html>
