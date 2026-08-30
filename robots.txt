@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://best-rate.vercel.app/sitemap.xml
+Sitemap: https://bestratetransfer.com/sitemap.xml
