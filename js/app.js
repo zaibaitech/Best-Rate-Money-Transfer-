@@ -193,32 +193,43 @@
     }, 2200);
   }
 
-  function copyText(text, successMessage) {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(
-        function () {
-          showToast(successMessage);
-        },
-        function () {
-          showToast("Could not copy — copy manually");
-        }
-      );
-    } else {
-      var area = document.createElement("textarea");
-      area.value = text;
-      area.style.position = "fixed";
-      area.style.opacity = "0";
-      document.body.appendChild(area);
-      area.focus();
-      area.select();
-      try {
-        document.execCommand("copy");
-        showToast(successMessage);
-      } catch (e) {
-        showToast("Could not copy — copy manually");
-      }
-      document.body.removeChild(area);
+  function legacyCopy(text) {
+    var area = document.createElement("textarea");
+    area.value = text;
+    area.setAttribute("readonly", "");
+    area.style.position = "fixed";
+    area.style.top = "0";
+    area.style.left = "0";
+    area.style.width = "1px";
+    area.style.height = "1px";
+    area.style.padding = "0";
+    area.style.border = "none";
+    area.style.opacity = "0";
+    document.body.appendChild(area);
+    area.focus();
+    area.select();
+    area.setSelectionRange(0, text.length);
+    var succeeded = false;
+    try {
+      succeeded = document.execCommand("copy");
+    } catch (e) {
+      succeeded = false;
     }
+    document.body.removeChild(area);
+    return succeeded;
+  }
+
+  function copyText(text) {
+    // Try the synchronous, broadly-supported method first — it works
+    // reliably across mobile browsers/webviews where the async
+    // Clipboard API can silently stall or be denied.
+    if (legacyCopy(text)) {
+      return Promise.resolve();
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      return navigator.clipboard.writeText(text);
+    }
+    return Promise.reject(new Error("copy unsupported"));
   }
 
   function copyAccountDetails() {
@@ -228,7 +239,14 @@
       "Account " + account.accountNumber,
       "Reference: " + account.reference
     ].join("\n");
-    copyText(text, "Account details copied");
+    copyText(text).then(
+      function () {
+        showToast("Account details copied");
+      },
+      function () {
+        showToast("Could not copy");
+      }
+    );
   }
 
   function selectValueText(btn) {
@@ -256,13 +274,7 @@
     var text = btn.dataset.copy;
     var label = btn.dataset.label;
 
-    if (!(navigator.clipboard && navigator.clipboard.writeText)) {
-      selectValueText(btn);
-      showToast("Could not copy");
-      return;
-    }
-
-    navigator.clipboard.writeText(text).then(
+    copyText(text).then(
       function () {
         flashCopied(btn);
         showToast("Copied " + label);

@@ -1,4 +1,5 @@
 :root {
+  color-scheme: dark;
   --navy-900: #071422;
   --navy-800: #0b1f3a;
   --navy-700: #12294a;
@@ -441,32 +442,35 @@ input:focus {
 .row-value {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 10px;
   min-width: 0;
 }
 
-/* Glassy icon-only copy control: no filled box, just a translucent
-   gold outline icon with a generous invisible tap target. */
+/* Icon-only copy control: an explicitly-colored solid box (not
+   transparent) so it renders identically everywhere, including
+   mobile browsers that auto-repaint transparent/translucent form
+   controls under forced dark mode. */
 .field-copy {
+  -webkit-appearance: none;
+  appearance: none;
   display: flex;
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 44px;
-  height: 44px;
-  margin: -13px -8px -13px 0;
+  width: 40px;
+  height: 40px;
   padding: 0;
-  border: none;
+  border: 1px solid #31466b;
   border-radius: 10px;
-  background: transparent;
-  color: rgba(201, 162, 39, 0.7);
+  background-color: #0f1c33;
+  color: var(--gold-soft);
   cursor: pointer;
-  transition: color 0.15s ease;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
 }
 
 .field-copy svg {
-  width: 17px;
-  height: 17px;
+  width: 18px;
+  height: 18px;
 }
 
 .field-copy .icon-check {
@@ -482,10 +486,9 @@ input:focus {
 }
 
 .field-copy:hover,
-.field-copy:focus-visible,
-.field-copy:active,
-.field-copy.is-copied {
-  color: #c9a227;
+.field-copy:focus-visible {
+  background-color: #1a2d4e;
+  border-color: var(--gold);
 }
 
 .field-copy:focus-visible {
@@ -495,6 +498,12 @@ input:focus {
 
 .field-copy:active svg {
   transform: scale(0.9);
+}
+
+.field-copy.is-copied {
+  color: var(--green);
+  border-color: #2f6b4e;
+  background-color: #10291e;
 }
 
 .account .row:has(.field-copy:hover),
