@@ -439,77 +439,48 @@ input:focus {
   text-align: right;
 }
 
-.row-value {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-width: 0;
-}
-
-/* Icon-only copy control: an explicitly-colored solid box (not
-   transparent) so it renders identically everywhere, including
-   mobile browsers that auto-repaint transparent/translucent form
-   controls under forced dark mode. */
-.field-copy {
+/* Tap the value itself to copy it — no separate icon control. */
+.copy-value {
   -webkit-appearance: none;
   appearance: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   flex: none;
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  border: 1px solid #31466b;
-  border-radius: 10px;
-  background-color: #0f1c33;
-  color: var(--gold-soft);
+  max-width: 65%;
+  padding: 4px 0;
+  border: none;
+  border-bottom: 1px dashed rgba(244, 215, 147, 0.4);
+  background: transparent;
+  color: var(--white);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  text-align: right;
   cursor: pointer;
-  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+  transition: color 0.15s ease, border-color 0.15s ease;
 }
 
-.field-copy svg {
-  width: 18px;
-  height: 18px;
+.copy-value:hover,
+.copy-value:focus-visible {
+  color: var(--gold-soft);
+  border-bottom-color: var(--gold);
 }
 
-.field-copy .icon-check {
-  display: none;
-}
-
-.field-copy.is-copied .icon-copy {
-  display: none;
-}
-
-.field-copy.is-copied .icon-check {
-  display: block;
-}
-
-.field-copy:hover,
-.field-copy:focus-visible {
-  background-color: #1a2d4e;
-  border-color: var(--gold);
-}
-
-.field-copy:focus-visible {
+.copy-value:focus-visible {
   outline: 2px solid var(--gold);
   outline-offset: 2px;
 }
 
-.field-copy:active svg {
-  transform: scale(0.9);
+.copy-value:active {
+  transform: scale(0.98);
 }
 
-.field-copy.is-copied {
+.copy-value.is-copied {
   color: var(--green);
-  border-color: #2f6b4e;
-  background-color: #10291e;
+  border-bottom-color: var(--green);
 }
 
-.account .row:has(.field-copy:hover),
-.account .row:has(.field-copy:focus-visible),
 .account .row.row-copied {
-  background: rgba(232, 191, 90, 0.07);
+  background: rgba(34, 197, 94, 0.08);
 }
 
 .copy-btn {

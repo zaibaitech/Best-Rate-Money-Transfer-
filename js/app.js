@@ -250,10 +250,9 @@
   }
 
   function selectValueText(btn) {
-    var valueEl = btn.parentElement.querySelector("b");
-    if (!valueEl || !window.getSelection) return;
+    if (!window.getSelection) return;
     var range = document.createRange();
-    range.selectNodeContents(valueEl);
+    range.selectNodeContents(btn);
     var sel = window.getSelection();
     sel.removeAllRanges();
     sel.addRange(range);
@@ -291,7 +290,7 @@
   receiverPhoneEl.addEventListener("input", validate);
   copyBtn.addEventListener("click", copyAccountDetails);
 
-  Array.prototype.forEach.call(document.querySelectorAll(".field-copy"), function (btn) {
+  Array.prototype.forEach.call(document.querySelectorAll(".copy-value"), function (btn) {
     btn.addEventListener("click", function () {
       copyField(btn);
     });
