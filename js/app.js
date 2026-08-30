@@ -26,21 +26,29 @@
 
   var methods = [
     { value: "pickup", label: "Cash pickup" },
-    { value: "bank", label: "Bank deposit" }
+    { value: "bank", label: "Bank deposit" },
+    { value: "wave", label: "Wave wallet" }
   ];
+
+  var WAVE_FEE_RATE = 0.01;
 
   var amountInput = document.getElementById("amount");
   var errorEl = document.getElementById("error");
   var rateValEl = document.getElementById("rateVal");
   var bandValEl = document.getElementById("bandVal");
+  var feeRowEl = document.getElementById("feeRow");
+  var feeValEl = document.getElementById("feeVal");
+  var waveHintEl = document.getElementById("waveHint");
   var gmdValEl = document.getElementById("gmdVal");
   var methodTilesEl = document.getElementById("methodTiles");
   var pickupSectionEl = document.getElementById("pickupSection");
   var bankSectionEl = document.getElementById("bankSection");
+  var waveSectionEl = document.getElementById("waveSection");
   var locationsEl = document.getElementById("locations");
   var banksEl = document.getElementById("banks");
   var bankAccountNumberEl = document.getElementById("bankAccountNumber");
   var bankAccountNameEl = document.getElementById("bankAccountName");
+  var waveNumberEl = document.getElementById("waveNumber");
   var receiverNameEl = document.getElementById("receiverName");
   var receiverPhoneEl = document.getElementById("receiverPhone");
   var waBtn = document.getElementById("waBtn");
@@ -113,9 +121,9 @@
   }
 
   function updateMethodSections() {
-    var isBank = state.method === "bank";
-    pickupSectionEl.hidden = isBank;
-    bankSectionEl.hidden = !isBank;
+    pickupSectionEl.hidden = state.method !== "pickup";
+    bankSectionEl.hidden = state.method !== "bank";
+    waveSectionEl.hidden = state.method !== "wave";
   }
 
   function renderMethodTiles() {
@@ -128,7 +136,7 @@
       function (m) {
         state.method = m.value;
         updateMethodSections();
-        validate();
+        updateRate();
       }
     );
     selectFirstTile(methodTilesEl);
@@ -162,6 +170,13 @@
     );
   }
 
+  function computeTotals(amount) {
+    var info = rateFor(amount);
+    var gross = Math.round(amount * info.rate);
+    var fee = state.method === "wave" ? Math.round(gross * WAVE_FEE_RATE) : 0;
+    return { rate: info.rate, band: info.band, gross: gross, fee: fee, net: gross - fee };
+  }
+
   function updateRate() {
     var raw = parseFloat(amountInput.value);
     var valid = updateAmountValidity();
@@ -175,12 +190,17 @@
     }
 
     var amount = valid ? raw : 0;
-    var info = rateFor(amount || 1);
-    var total = Math.round(amount * info.rate);
+    var totals = computeTotals(amount || 1);
+    var isWave = state.method === "wave";
 
-    rateValEl.textContent = info.rate + " GMD";
-    bandValEl.textContent = info.band;
-    gmdValEl.textContent = "D" + gmd.format(total);
+    rateValEl.textContent = totals.rate + " GMD";
+    bandValEl.textContent = totals.band;
+    gmdValEl.textContent = "D" + gmd.format(totals.net);
+    feeRowEl.hidden = !isWave;
+    waveHintEl.hidden = !isWave;
+    if (isWave) {
+      feeValEl.textContent = "−D" + gmd.format(totals.fee);
+    }
 
     validate();
     return valid;
@@ -191,6 +211,9 @@
       return !!state.bank &&
         bankAccountNumberEl.value.trim().length > 3 &&
         bankAccountNameEl.value.trim().length > 1;
+    }
+    if (state.method === "wave") {
+      return waveNumberEl.value.trim().length > 6;
     }
     return !!state.pickup;
   }
@@ -220,6 +243,8 @@
       if (!state.bank) return "a receiving bank";
       if (bankAccountNumberEl.value.trim().length <= 3) return "the bank account number";
       if (bankAccountNameEl.value.trim().length <= 1) return "the account holder name";
+    } else if (state.method === "wave") {
+      if (waveNumberEl.value.trim().length <= 6) return "the Wave wallet number";
     } else if (!state.pickup) {
       return "a pickup point";
     }
@@ -240,6 +265,12 @@
         "Account name: " + bankAccountNameEl.value.trim()
       ];
     }
+    if (state.method === "wave") {
+      return [
+        "Delivery: Wave wallet",
+        "Wave number: " + waveNumberEl.value.trim()
+      ];
+    }
     return [
       "Delivery: Cash pickup",
       "Pickup point: " + state.pickup
@@ -250,27 +281,42 @@
     if (state.method === "bank") {
       return "Bank: " + state.bank + " · Account: " + bankAccountNumberEl.value.trim();
     }
+    if (state.method === "wave") {
+      return "Wave number: " + waveNumberEl.value.trim();
+    }
     return "Pickup point: " + (state.pickup || "—");
   }
 
   function buildRequestMessage() {
     var raw = parseFloat(amountInput.value) || 0;
-    var info = rateFor(raw);
-    var total = Math.round(raw * info.rate);
+    var totals = computeTotals(raw);
     var name = receiverNameEl.value.trim();
     var phone = receiverPhoneEl.value.trim();
+
+    var amountLines = state.method === "wave"
+      ? [
+          "Rate: " + totals.rate + " GMD per £1",
+          "Gross amount: D" + gmd.format(totals.gross),
+          "Wave fee (1%): D" + gmd.format(totals.fee),
+          "Receiver gets (net): D" + gmd.format(totals.net)
+        ]
+      : [
+          "Rate: " + totals.rate + " GMD per £1",
+          "Receiver gets: D" + gmd.format(totals.net)
+        ];
 
     var lines = [
       "Hello Best Rate, I'd like to send a local transfer.",
       "",
       "Request ID: " + state.requestId,
-      "Amount: £" + gbp.format(raw),
-      "Rate: " + info.rate + " GMD per £1",
-      "Receiver gets: D" + gmd.format(total),
-      "",
-      "Receiver name: " + name,
-      "Receiver phone: " + phone
+      "Amount: £" + gbp.format(raw)
     ]
+      .concat(amountLines)
+      .concat([
+        "",
+        "Receiver name: " + name,
+        "Receiver phone: " + phone
+      ])
       .concat(deliveryRequestLines())
       .concat([
         "",
@@ -406,6 +452,7 @@
   receiverPhoneEl.addEventListener("input", validate);
   bankAccountNumberEl.addEventListener("input", validate);
   bankAccountNameEl.addEventListener("input", validate);
+  waveNumberEl.addEventListener("input", validate);
   copyBtn.addEventListener("click", copyAccountDetails);
 
   Array.prototype.forEach.call(document.querySelectorAll(".copy-value"), function (btn) {

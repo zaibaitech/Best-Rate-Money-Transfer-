@@ -105,12 +105,17 @@
           <div class="k">Band</div>
           <div class="v" id="bandVal">£1 – £1,000</div>
         </div>
+        <div class="full" id="feeRow" hidden>
+          <div class="k">Wave fee (1%)</div>
+          <div class="v" id="feeVal">−D0</div>
+        </div>
         <div class="full">
           <div class="k">Receiver gets</div>
           <div class="v big" id="gmdVal">D94,000</div>
         </div>
       </div>
       <p class="hint">£1–1,000 = 94 · £1,000–5,000 = 95 · £5,000–10,000 = 96 · £10,000–100,000 = 97</p>
+      <p class="hint" id="waveHint" hidden>Wave wallet delivery has a 1% fee, already deducted from the total above.</p>
     </section>
 
     <section class="card">
@@ -135,6 +140,11 @@
         <input id="bankAccountNumber" inputmode="numeric" autocomplete="off" placeholder="Account number">
         <label for="bankAccountName">Account holder name</label>
         <input id="bankAccountName" autocomplete="off" placeholder="Name on the bank account">
+      </div>
+
+      <div id="waveSection" hidden>
+        <label for="waveNumber">Wave wallet number</label>
+        <input id="waveNumber" inputmode="tel" autocomplete="off" placeholder="220 7xx xxxx">
       </div>
     </section>
 
