@@ -28,19 +28,28 @@ html {
   background: var(--navy-900);
 }
 
+html {
+  height: 100%;
+}
+
 body {
   margin: 0;
   min-height: 100vh;
+  min-height: 100dvh;
   background: radial-gradient(120% 100% at 50% 0%, var(--navy-700) 0%, var(--navy-900) 55%);
   color: var(--white);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  padding-bottom: max(168px, calc(160px + env(safe-area-inset-bottom)));
 }
 
 .app {
   max-width: 430px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.scroll-area {
   padding: 28px 18px 24px;
   display: flex;
   flex-direction: column;
@@ -573,23 +582,69 @@ input:focus {
   transform: translate(-50%, 0);
 }
 
-/* ---------- Sticky mobile CTA ---------- */
+/* ---------- Sticky mobile CTA ----------
+   The app shell is pinned to the full viewport height. Its content
+   scrolls in its own pane (.scroll-area); the CTA bar is a separate
+   flex sibling below it, so it can never render on top of any card,
+   hint, or footer text — regardless of viewport height or content
+   length. */
 
 @media (max-width: 520px) {
-  .actions {
-    position: fixed;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    z-index: 10;
-    padding: 12px 18px max(12px, env(safe-area-inset-bottom));
-    background: linear-gradient(180deg, rgba(7, 20, 34, 0) 0%, var(--navy-900) 28%);
+  html,
+  body {
+    height: 100%;
+    overflow: hidden;
   }
 
+  .app {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .scroll-area {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .actions {
+    flex: none;
+    z-index: 10;
+    gap: 8px;
+    padding: 10px 18px max(10px, env(safe-area-inset-bottom));
+    background: var(--navy-900);
+    border-top: 1px solid var(--line);
+  }
+
+  /* Trim vertical rhythm so the rate card (the core feature) fits
+     above the CTA without scrolling on typical phones. */
+  .scroll-area {
+    padding-top: 20px;
+    gap: 14px;
+  }
+
+  .hero {
+    gap: 6px;
+    padding-bottom: 0;
+  }
+
+  .steps {
+    padding: 12px 16px;
+    gap: 8px;
+  }
+
+  .card,
+  .account {
+    padding: 16px 16px 18px;
+  }
 }
 
-@media (min-width: 521px) {
-  body {
-    padding-bottom: 24px;
+/* Genuinely short screens (older/smaller phones): the "How it
+   works" explainer is a nice-to-have, not the core feature — drop
+   it so the rate card and its hint always fit without clipping. */
+@media (max-width: 520px) and (max-height: 700px) {
+  .steps {
+    display: none;
   }
 }

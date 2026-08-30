@@ -10,8 +10,11 @@
     </linearGradient>
   </defs>
   <circle cx="48" cy="48" r="46" fill="url(#bg)" stroke="url(#ring)" stroke-width="3"/>
-  <path d="M30 40 L45 40 Q52 40 52 47 Q52 53 45 53 L34 53" fill="none" stroke="url(#ring)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M34 53 L48 53 Q56 53 56 60.5 Q56 68 48 68 L30 68" fill="none" stroke="url(#ring)" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M62 30 L70 38 L62 46" fill="none" stroke="url(#ring)" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round"/>
-  <line x1="70" y1="38" x2="52" y2="38" stroke="url(#ring)" stroke-width="4.5" stroke-linecap="round"/>
+  <circle cx="42" cy="54" r="17" fill="none" stroke="url(#ring)" stroke-width="2.6"/>
+  <ellipse cx="42" cy="54" rx="7.2" ry="17" fill="none" stroke="url(#ring)" stroke-width="1.8"/>
+  <line x1="25" y1="54" x2="59" y2="54" stroke="url(#ring)" stroke-width="1.8"/>
+  <path d="M28 46 Q42 51.5 56 46" fill="none" stroke="url(#ring)" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M28 62 Q42 56.5 56 62" fill="none" stroke="url(#ring)" stroke-width="1.5" stroke-linecap="round"/>
+  <path d="M53 41 L71 23" stroke="url(#ring)" stroke-width="3.6" stroke-linecap="round"/>
+  <path d="M71 23 L60 23 M71 23 L71 34" stroke="url(#ring)" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>

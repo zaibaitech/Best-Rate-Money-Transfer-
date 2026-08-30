@@ -47,6 +47,7 @@
 </head>
 <body>
   <main class="app">
+    <div class="scroll-area">
     <header class="hero">
       <div class="logo-row">
         <img src="icons/logo.svg" alt="">
@@ -138,16 +139,17 @@
 
     <p class="reqid">Request ID <b id="reqIdVal">—</b></p>
 
+    <p class="fine">
+      This page only prepares your request and opens WhatsApp. You pay by UK bank transfer to UNILINX LIMITED.
+      Cash is released after we confirm the payment. Not Sendwave, Wave or an app-store wallet.
+    </p>
+    </div>
+
     <div class="actions">
       <a class="wa-btn" id="waBtn" aria-disabled="true">WhatsApp this request</a>
       <p class="cta-hint" id="ctaHint" aria-live="polite"></p>
       <button class="secondary" id="paidBtn" type="button">I’ve paid — send receipt chat</button>
     </div>
-
-    <p class="fine">
-      This page only prepares your request and opens WhatsApp. You pay by UK bank transfer to UNILINX LIMITED.
-      Cash is released after we confirm the payment. Not Sendwave, Wave or an app-store wallet.
-    </p>
   </main>
   <div class="toast" id="toast"></div>
   <script src="js/app.js"></script>
