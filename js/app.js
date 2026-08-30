@@ -30,6 +30,7 @@
   var copyBtn = document.getElementById("copyBtn");
   var reqIdVal = document.getElementById("reqIdVal");
   var toastEl = document.getElementById("toast");
+  var ctaHintEl = document.getElementById("ctaHint");
 
   var state = {
     pickup: null,
@@ -119,10 +120,20 @@
     waBtn.setAttribute("aria-disabled", allValid ? "false" : "true");
     if (allValid) {
       waBtn.href = buildWhatsAppLink();
+      ctaHintEl.textContent = "";
     } else {
       waBtn.removeAttribute("href");
+      ctaHintEl.textContent = "Fill in " + firstMissingField(amountValid, nameValid, phoneValid, pickupValid) + " to continue";
     }
     return allValid;
+  }
+
+  function firstMissingField(amountValid, nameValid, phoneValid, pickupValid) {
+    if (!amountValid) return "a valid amount";
+    if (!nameValid) return "the receiver's name";
+    if (!phoneValid) return "the receiver's phone number";
+    if (!pickupValid) return "a pickup point";
+    return "";
   }
 
   function updateAmountValidity() {

@@ -35,7 +35,7 @@ body {
   color: var(--white);
   font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
-  padding-bottom: max(96px, calc(88px + env(safe-area-inset-bottom)));
+  padding-bottom: max(168px, calc(160px + env(safe-area-inset-bottom)));
 }
 
 .app {
@@ -45,6 +45,57 @@ body {
   display: flex;
   flex-direction: column;
   gap: 18px;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero,
+.steps,
+.card,
+.account,
+.reqid,
+.actions,
+.fine {
+  animation: fade-up 0.45s ease both;
+}
+
+section:nth-of-type(1) { animation-delay: 0.05s; }
+section:nth-of-type(2) { animation-delay: 0.1s; }
+section:nth-of-type(3) { animation-delay: 0.15s; }
+section:nth-of-type(4) { animation-delay: 0.2s; }
+.reqid,
+.actions,
+.fine { animation-delay: 0.25s; }
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero,
+  .steps,
+  .card,
+  .account,
+  .reqid,
+  .actions,
+  .fine,
+  .loc-tile,
+  .wa-btn,
+  .secondary,
+  .copy-btn {
+    animation: none !important;
+    transition: none !important;
+  }
 }
 
 /* ---------- Header ---------- */
@@ -106,6 +157,51 @@ body {
 
 .pills .dot {
   color: var(--gold);
+}
+
+/* ---------- Steps ---------- */
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.step-no {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(232, 191, 90, 0.12);
+  border: 1px solid rgba(232, 191, 90, 0.4);
+  color: var(--gold-soft);
+  font-family: var(--font-display);
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+.step-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--white);
+}
+
+.step-desc {
+  font-size: 12px;
+  color: var(--dim-2);
+  margin-top: 1px;
 }
 
 /* ---------- Cards ---------- */
@@ -349,6 +445,24 @@ input:focus {
   background: rgba(232, 191, 90, 0.1);
 }
 
+.secure-note {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 14px 2px 0;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dim);
+}
+
+.secure-note svg {
+  width: 15px;
+  height: 15px;
+  min-width: 15px;
+  margin-top: 1px;
+  fill: var(--gold);
+}
+
 /* ---------- Actions ---------- */
 
 .actions {
@@ -367,6 +481,15 @@ input:focus {
 
 .reqid b {
   color: var(--dim);
+}
+
+.cta-hint {
+  min-height: 14px;
+  margin: 2px 4px 0;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--dim-2);
 }
 
 .wa-btn {
