@@ -496,6 +496,10 @@
     return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
   }
 
+  function isAndroid() {
+    return /android/i.test(window.navigator.userAgent);
+  }
+
   function isDismissed() {
     try {
       return window.localStorage.getItem(DISMISS_KEY) === "1";
@@ -551,5 +555,16 @@
   if (isIOS() && !isStandalone()) {
     descEl.textContent = "Tap the Share icon in Safari, then \"Add to Home Screen\".";
     showBanner();
+  } else if (isAndroid() && !isStandalone()) {
+    // Chrome may fire beforeinstallprompt a moment later, or not at
+    // all in browsers that don't support it (Samsung Internet,
+    // Firefox for Android, etc.). Fall back to manual instructions
+    // so Android users always get some way to install, not silence.
+    window.setTimeout(function () {
+      if (!deferredPrompt && banner.hidden) {
+        descEl.textContent = "Open your browser menu and tap \"Add to Home screen\" or \"Install app\".";
+        showBanner();
+      }
+    }, 2500);
   }
 })();
