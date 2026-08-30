@@ -434,6 +434,44 @@ input:focus {
   letter-spacing: 0.02em;
 }
 
+.row-value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.field-copy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  min-width: 26px;
+  padding: 0;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--dim);
+  cursor: pointer;
+  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.field-copy svg {
+  width: 14px;
+  height: 14px;
+}
+
+.field-copy:hover,
+.field-copy:focus-visible {
+  color: var(--gold-soft);
+  border-color: var(--gold);
+  background: rgba(232, 191, 90, 0.1);
+}
+
+.field-copy:active {
+  transform: scale(0.9);
+}
+
 .copy-btn {
   width: 100%;
   margin-top: 14px;

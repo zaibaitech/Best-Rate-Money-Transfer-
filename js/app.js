@@ -193,18 +193,11 @@
     }, 2200);
   }
 
-  function copyAccountDetails() {
-    var text = [
-      account.name,
-      "Sort code " + account.sortCode,
-      "Account " + account.accountNumber,
-      "Reference: " + account.reference
-    ].join("\n");
-
+  function copyText(text, successMessage) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       navigator.clipboard.writeText(text).then(
         function () {
-          showToast("Account details copied");
+          showToast(successMessage);
         },
         function () {
           showToast("Could not copy — copy manually");
@@ -220,7 +213,7 @@
       area.select();
       try {
         document.execCommand("copy");
-        showToast("Account details copied");
+        showToast(successMessage);
       } catch (e) {
         showToast("Could not copy — copy manually");
       }
@@ -228,10 +221,26 @@
     }
   }
 
+  function copyAccountDetails() {
+    var text = [
+      account.name,
+      "Sort code " + account.sortCode,
+      "Account " + account.accountNumber,
+      "Reference: " + account.reference
+    ].join("\n");
+    copyText(text, "Account details copied");
+  }
+
   amountInput.addEventListener("input", updateRate);
   receiverNameEl.addEventListener("input", validate);
   receiverPhoneEl.addEventListener("input", validate);
   copyBtn.addEventListener("click", copyAccountDetails);
+
+  Array.prototype.forEach.call(document.querySelectorAll(".field-copy"), function (btn) {
+    btn.addEventListener("click", function () {
+      copyText(btn.dataset.copy, btn.dataset.label + " copied");
+    });
+  });
 
   paidBtn.addEventListener("click", function () {
     var link = "https://wa.me/" + WA_NUMBER + "?text=" + encodeURIComponent(buildPaidMessage());
