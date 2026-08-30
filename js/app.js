@@ -17,12 +17,30 @@
     "Serekunda Westfield"
   ];
 
+  var banks = [
+    "Trust Bank Gambia",
+    "Access Bank Gambia",
+    "Ecobank Gambia",
+    "GTBank Gambia"
+  ];
+
+  var methods = [
+    { value: "pickup", label: "Cash pickup" },
+    { value: "bank", label: "Bank deposit" }
+  ];
+
   var amountInput = document.getElementById("amount");
   var errorEl = document.getElementById("error");
   var rateValEl = document.getElementById("rateVal");
   var bandValEl = document.getElementById("bandVal");
   var gmdValEl = document.getElementById("gmdVal");
+  var methodTilesEl = document.getElementById("methodTiles");
+  var pickupSectionEl = document.getElementById("pickupSection");
+  var bankSectionEl = document.getElementById("bankSection");
   var locationsEl = document.getElementById("locations");
+  var banksEl = document.getElementById("banks");
+  var bankAccountNumberEl = document.getElementById("bankAccountNumber");
+  var bankAccountNameEl = document.getElementById("bankAccountName");
   var receiverNameEl = document.getElementById("receiverName");
   var receiverPhoneEl = document.getElementById("receiverPhone");
   var waBtn = document.getElementById("waBtn");
@@ -33,7 +51,9 @@
   var ctaHintEl = document.getElementById("ctaHint");
 
   var state = {
+    method: "pickup",
     pickup: null,
+    bank: null,
     requestId: makeRequestId()
   };
 
@@ -52,38 +72,94 @@
     return { rate: 97, band: "£10,000 – £100,000" };
   }
 
-  function renderLocations() {
-    locationsEl.innerHTML = "";
-    locations.forEach(function (name) {
+  function renderTiles(container, items, getLabel, onSelect) {
+    container.innerHTML = "";
+    items.forEach(function (item) {
       var tile = document.createElement("button");
       tile.type = "button";
       tile.className = "loc-tile";
       tile.setAttribute("aria-pressed", "false");
-      tile.dataset.name = name;
 
       var dot = document.createElement("span");
       dot.className = "dot";
       tile.appendChild(dot);
 
       var label = document.createElement("span");
-      label.textContent = name;
+      label.textContent = getLabel(item);
       tile.appendChild(label);
 
       tile.addEventListener("click", function () {
-        state.pickup = name;
         Array.prototype.forEach.call(
-          locationsEl.querySelectorAll(".loc-tile"),
+          container.querySelectorAll(".loc-tile"),
           function (t) {
             var isSelected = t === tile;
             t.classList.toggle("selected", isSelected);
             t.setAttribute("aria-pressed", isSelected ? "true" : "false");
           }
         );
-        validate();
+        onSelect(item);
       });
 
-      locationsEl.appendChild(tile);
+      container.appendChild(tile);
     });
+  }
+
+  function selectFirstTile(container) {
+    var tile = container.querySelector(".loc-tile");
+    if (tile) {
+      tile.classList.add("selected");
+      tile.setAttribute("aria-pressed", "true");
+    }
+  }
+
+  function updateMethodSections() {
+    var isBank = state.method === "bank";
+    pickupSectionEl.hidden = isBank;
+    bankSectionEl.hidden = !isBank;
+  }
+
+  function renderMethodTiles() {
+    renderTiles(
+      methodTilesEl,
+      methods,
+      function (m) {
+        return m.label;
+      },
+      function (m) {
+        state.method = m.value;
+        updateMethodSections();
+        validate();
+      }
+    );
+    selectFirstTile(methodTilesEl);
+  }
+
+  function renderLocations() {
+    renderTiles(
+      locationsEl,
+      locations,
+      function (name) {
+        return name;
+      },
+      function (name) {
+        state.pickup = name;
+        validate();
+      }
+    );
+  }
+
+  function renderBanks() {
+    renderTiles(
+      banksEl,
+      banks,
+      function (name) {
+        return name;
+      },
+      function (name) {
+        state.bank = name;
+        validate();
+      }
+    );
   }
 
   function updateRate() {
@@ -110,35 +186,71 @@
     return valid;
   }
 
+  function deliveryValid() {
+    if (state.method === "bank") {
+      return !!state.bank &&
+        bankAccountNumberEl.value.trim().length > 3 &&
+        bankAccountNameEl.value.trim().length > 1;
+    }
+    return !!state.pickup;
+  }
+
   function validate() {
     var amountValid = updateAmountValidity();
     var nameValid = receiverNameEl.value.trim().length > 1;
     var phoneValid = receiverPhoneEl.value.trim().length > 6;
-    var pickupValid = !!state.pickup;
 
-    var allValid = amountValid && nameValid && phoneValid && pickupValid;
+    var allValid = amountValid && nameValid && phoneValid && deliveryValid();
     waBtn.setAttribute("aria-disabled", allValid ? "false" : "true");
     if (allValid) {
       waBtn.href = buildWhatsAppLink();
       ctaHintEl.textContent = "";
     } else {
       waBtn.removeAttribute("href");
-      ctaHintEl.textContent = "Fill in " + firstMissingField(amountValid, nameValid, phoneValid, pickupValid) + " to continue";
+      ctaHintEl.textContent = "Fill in " + firstMissingField(amountValid, nameValid, phoneValid) + " to continue";
     }
     return allValid;
   }
 
-  function firstMissingField(amountValid, nameValid, phoneValid, pickupValid) {
+  function firstMissingField(amountValid, nameValid, phoneValid) {
     if (!amountValid) return "a valid amount";
     if (!nameValid) return "the receiver's name";
     if (!phoneValid) return "the receiver's phone number";
-    if (!pickupValid) return "a pickup point";
+    if (state.method === "bank") {
+      if (!state.bank) return "a receiving bank";
+      if (bankAccountNumberEl.value.trim().length <= 3) return "the bank account number";
+      if (bankAccountNameEl.value.trim().length <= 1) return "the account holder name";
+    } else if (!state.pickup) {
+      return "a pickup point";
+    }
     return "";
   }
 
   function updateAmountValidity() {
     var raw = parseFloat(amountInput.value);
     return !isNaN(raw) && raw >= 1 && raw <= 100000;
+  }
+
+  function deliveryRequestLines() {
+    if (state.method === "bank") {
+      return [
+        "Delivery: Bank deposit",
+        "Bank: " + state.bank,
+        "Account number: " + bankAccountNumberEl.value.trim(),
+        "Account name: " + bankAccountNameEl.value.trim()
+      ];
+    }
+    return [
+      "Delivery: Cash pickup",
+      "Pickup point: " + state.pickup
+    ];
+  }
+
+  function deliverySummaryLine() {
+    if (state.method === "bank") {
+      return "Bank: " + state.bank + " · Account: " + bankAccountNumberEl.value.trim();
+    }
+    return "Pickup point: " + (state.pickup || "—");
   }
 
   function buildRequestMessage() {
@@ -157,15 +269,17 @@
       "Receiver gets: D" + gmd.format(total),
       "",
       "Receiver name: " + name,
-      "Receiver phone: " + phone,
-      "Pickup point: " + state.pickup,
-      "",
-      "I will pay by UK bank transfer to:",
-      account.name,
-      "Sort code " + account.sortCode,
-      "Account " + account.accountNumber,
-      "Reference: " + account.reference
-    ];
+      "Receiver phone: " + phone
+    ]
+      .concat(deliveryRequestLines())
+      .concat([
+        "",
+        "I will pay by UK bank transfer to:",
+        account.name,
+        "Sort code " + account.sortCode,
+        "Account " + account.accountNumber,
+        "Reference: " + account.reference
+      ]);
     return lines.join("\n");
   }
 
@@ -180,7 +294,9 @@
       "Request ID: " + state.requestId,
       "Amount: £" + gbp.format(parseFloat(amountInput.value) || 0),
       "Receiver name: " + receiverNameEl.value.trim(),
-      "Pickup point: " + (state.pickup || "—")
+      deliverySummaryLine(),
+      "",
+      "(Attaching my payment screenshot to this chat.)"
     ].join("\n");
   }
 
@@ -288,6 +404,8 @@
   amountInput.addEventListener("input", updateRate);
   receiverNameEl.addEventListener("input", validate);
   receiverPhoneEl.addEventListener("input", validate);
+  bankAccountNumberEl.addEventListener("input", validate);
+  bankAccountNameEl.addEventListener("input", validate);
   copyBtn.addEventListener("click", copyAccountDetails);
 
   Array.prototype.forEach.call(document.querySelectorAll(".copy-value"), function (btn) {
@@ -302,6 +420,9 @@
   });
 
   reqIdVal.textContent = state.requestId;
+  renderMethodTiles();
+  updateMethodSections();
   renderLocations();
+  renderBanks();
   updateRate();
 })();

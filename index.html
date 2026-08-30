@@ -116,12 +116,26 @@
     <section class="card">
       <h2>Who is collecting</h2>
       <label for="receiverName">Receiver name</label>
-      <input id="receiverName" autocomplete="name" placeholder="Name as used at pickup">
+      <input id="receiverName" autocomplete="name" placeholder="Full name of the receiver">
       <label for="receiverPhone">Receiver WhatsApp / phone</label>
       <input id="receiverPhone" inputmode="tel" autocomplete="tel" placeholder="220 7xx xxxx">
 
-      <label>Pickup in The Gambia</label>
-      <div class="locs" id="locations"></div>
+      <label>How should they receive it?</label>
+      <div class="locs method-tiles" id="methodTiles"></div>
+
+      <div id="pickupSection">
+        <label>Pickup in The Gambia</label>
+        <div class="locs" id="locations"></div>
+      </div>
+
+      <div id="bankSection" hidden>
+        <label>Receiving bank</label>
+        <div class="locs" id="banks"></div>
+        <label for="bankAccountNumber">Bank account number</label>
+        <input id="bankAccountNumber" inputmode="numeric" autocomplete="off" placeholder="Account number">
+        <label for="bankAccountName">Account holder name</label>
+        <input id="bankAccountName" autocomplete="off" placeholder="Name on the bank account">
+      </div>
     </section>
 
     <section class="account">
@@ -160,7 +174,7 @@
     <div class="actions">
       <a class="wa-btn" id="waBtn" aria-disabled="true">WhatsApp this request</a>
       <p class="cta-hint" id="ctaHint" aria-live="polite"></p>
-      <button class="secondary" id="paidBtn" type="button">I’ve paid — send receipt chat</button>
+      <button class="secondary" id="paidBtn" type="button">I’ve paid — attach receipt &amp; send</button>
     </div>
   </main>
   <div class="toast" id="toast"></div>
