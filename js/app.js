@@ -473,3 +473,83 @@
   renderBanks();
   updateRate();
 })();
+
+(function () {
+  "use strict";
+
+  var DISMISS_KEY = "br-install-dismissed";
+
+  var banner = document.getElementById("installBanner");
+  var descEl = document.getElementById("installDesc");
+  var installBtn = document.getElementById("installBtn");
+  var closeBtn = document.getElementById("installClose");
+  var deferredPrompt = null;
+
+  function isStandalone() {
+    return (
+      (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) ||
+      window.navigator.standalone === true
+    );
+  }
+
+  function isIOS() {
+    return /iphone|ipad|ipod/i.test(window.navigator.userAgent);
+  }
+
+  function isDismissed() {
+    try {
+      return window.localStorage.getItem(DISMISS_KEY) === "1";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function setDismissed() {
+    try {
+      window.localStorage.setItem(DISMISS_KEY, "1");
+    } catch (e) {
+      // ignore — storage may be unavailable (private browsing, etc.)
+    }
+  }
+
+  function showBanner() {
+    if (isStandalone() || isDismissed()) return;
+    banner.hidden = false;
+  }
+
+  function hideBanner() {
+    banner.hidden = true;
+  }
+
+  closeBtn.addEventListener("click", function () {
+    hideBanner();
+    setDismissed();
+  });
+
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+    installBtn.hidden = false;
+    showBanner();
+  });
+
+  installBtn.addEventListener("click", function () {
+    if (!deferredPrompt) return;
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(function () {
+      deferredPrompt = null;
+      hideBanner();
+      setDismissed();
+    });
+  });
+
+  window.addEventListener("appinstalled", function () {
+    hideBanner();
+    setDismissed();
+  });
+
+  if (isIOS() && !isStandalone()) {
+    descEl.textContent = "Tap the Share icon in Safari, then \"Add to Home Screen\".";
+    showBanner();
+  }
+})();
