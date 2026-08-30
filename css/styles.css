@@ -417,6 +417,8 @@ input:focus {
   padding: 10px 0;
   border-bottom: 1px solid var(--line);
   font-size: 14px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
 }
 
 .account .row:last-of-type {
@@ -426,50 +428,79 @@ input:focus {
 .account .row span {
   color: var(--dim);
   font-weight: 500;
+  flex: none;
 }
 
 .account .row b {
   color: var(--white);
   font-weight: 700;
   letter-spacing: 0.02em;
+  text-align: right;
 }
 
 .row-value {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 2px;
+  min-width: 0;
 }
 
+/* Glassy icon-only copy control: no filled box, just a translucent
+   gold outline icon with a generous invisible tap target. */
 .field-copy {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
-  min-width: 26px;
+  flex: none;
+  width: 44px;
+  height: 44px;
+  margin: -13px -8px -13px 0;
   padding: 0;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.04);
-  color: var(--dim);
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: rgba(201, 162, 39, 0.7);
   cursor: pointer;
-  transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+  transition: color 0.15s ease;
 }
 
 .field-copy svg {
-  width: 14px;
-  height: 14px;
+  width: 17px;
+  height: 17px;
+}
+
+.field-copy .icon-check {
+  display: none;
+}
+
+.field-copy.is-copied .icon-copy {
+  display: none;
+}
+
+.field-copy.is-copied .icon-check {
+  display: block;
 }
 
 .field-copy:hover,
-.field-copy:focus-visible {
-  color: var(--gold-soft);
-  border-color: var(--gold);
-  background: rgba(232, 191, 90, 0.1);
+.field-copy:focus-visible,
+.field-copy:active,
+.field-copy.is-copied {
+  color: #c9a227;
 }
 
-.field-copy:active {
+.field-copy:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
+}
+
+.field-copy:active svg {
   transform: scale(0.9);
+}
+
+.account .row:has(.field-copy:hover),
+.account .row:has(.field-copy:focus-visible),
+.account .row.row-copied {
+  background: rgba(232, 191, 90, 0.07);
 }
 
 .copy-btn {

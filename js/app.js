@@ -231,6 +231,49 @@
     copyText(text, "Account details copied");
   }
 
+  function selectValueText(btn) {
+    var valueEl = btn.parentElement.querySelector("b");
+    if (!valueEl || !window.getSelection) return;
+    var range = document.createRange();
+    range.selectNodeContents(valueEl);
+    var sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  function flashCopied(btn) {
+    var row = btn.closest(".row");
+    btn.classList.add("is-copied");
+    if (row) row.classList.add("row-copied");
+    window.clearTimeout(btn._copiedTimer);
+    btn._copiedTimer = window.setTimeout(function () {
+      btn.classList.remove("is-copied");
+      if (row) row.classList.remove("row-copied");
+    }, 1200);
+  }
+
+  function copyField(btn) {
+    var text = btn.dataset.copy;
+    var label = btn.dataset.label;
+
+    if (!(navigator.clipboard && navigator.clipboard.writeText)) {
+      selectValueText(btn);
+      showToast("Could not copy");
+      return;
+    }
+
+    navigator.clipboard.writeText(text).then(
+      function () {
+        flashCopied(btn);
+        showToast("Copied " + label);
+      },
+      function () {
+        selectValueText(btn);
+        showToast("Could not copy");
+      }
+    );
+  }
+
   amountInput.addEventListener("input", updateRate);
   receiverNameEl.addEventListener("input", validate);
   receiverPhoneEl.addEventListener("input", validate);
@@ -238,7 +281,7 @@
 
   Array.prototype.forEach.call(document.querySelectorAll(".field-copy"), function (btn) {
     btn.addEventListener("click", function () {
-      copyText(btn.dataset.copy, btn.dataset.label + " copied");
+      copyField(btn);
     });
   });
 
