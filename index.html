@@ -31,7 +31,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&family=Outfit:wght@700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/styles.css?v=2">
+  <link rel="stylesheet" href="css/styles.css?v=3">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -125,7 +125,10 @@
         </div>
         <div class="full">
           <div class="k">Receiver gets</div>
-          <div class="v big" id="gmdVal">D94,000</div>
+          <div class="amount-wrap gmd-wrap">
+            <span>D</span>
+            <input id="gmdVal" inputmode="decimal" type="number" min="0" step="1" value="94000" aria-label="Receiver gets, in Dalasi — edit this to convert Dalasi to Pounds">
+          </div>
         </div>
       </div>
       <p class="hint">£1–1,000 = 94 · £1,000–5,000 = 95 · £5,000–10,000 = 96 · £10,000–100,000 = 97</p>
@@ -202,6 +205,6 @@
     </div>
   </main>
   <div class="toast" id="toast"></div>
-  <script src="js/app.js?v=2"></script>
+  <script src="js/app.js?v=3"></script>
 </body>
 </html>

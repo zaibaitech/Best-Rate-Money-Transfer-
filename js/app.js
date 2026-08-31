@@ -195,15 +195,43 @@
 
     rateValEl.textContent = totals.rate + " GMD";
     bandValEl.textContent = totals.band;
-    gmdValEl.textContent = "D" + gmd.format(totals.net);
     feeRowEl.hidden = !isWave;
     waveHintEl.hidden = !isWave;
     if (isWave) {
       feeValEl.textContent = "−D" + gmd.format(totals.fee);
     }
+    // Don't stomp on the field the user is actively typing in.
+    if (document.activeElement !== gmdValEl) {
+      gmdValEl.value = totals.net;
+    }
 
     validate();
     return valid;
+  }
+
+  // The rate depends on which £ band the amount falls into, so going
+  // from a target Dalasi amount back to Pounds means guessing a band,
+  // converting, and re-checking the band — a couple of passes always
+  // settles since the bands are wide relative to the rate gaps between
+  // them.
+  function amountFromNet(desiredNet, method) {
+    var amount = parseFloat(amountInput.value);
+    if (!amount || amount <= 0) amount = 1000;
+    for (var i = 0; i < 6; i++) {
+      var info = rateFor(amount);
+      var gross = method === "wave" ? desiredNet / (1 - WAVE_FEE_RATE) : desiredNet;
+      amount = gross / info.rate;
+    }
+    return amount;
+  }
+
+  function updateFromGmd() {
+    var rawNet = parseFloat(gmdValEl.value);
+    if (!gmdValEl.value || isNaN(rawNet) || rawNet < 0) return;
+
+    var amount = amountFromNet(rawNet, state.method);
+    amountInput.value = Math.round(amount * 100) / 100;
+    updateRate();
   }
 
   function deliveryValid() {
@@ -448,6 +476,7 @@
   }
 
   amountInput.addEventListener("input", updateRate);
+  gmdValEl.addEventListener("input", updateFromGmd);
   receiverNameEl.addEventListener("input", validate);
   receiverPhoneEl.addEventListener("input", validate);
   bankAccountNumberEl.addEventListener("input", validate);

@@ -417,6 +417,26 @@ input:focus {
   background: transparent;
 }
 
+.amount-wrap input::-webkit-outer-spin-button,
+.amount-wrap input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.amount-wrap input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.gmd-wrap span {
+  font-size: 32px;
+}
+
+.gmd-wrap input {
+  color: var(--gold);
+  font-size: 32px;
+  letter-spacing: 0.01em;
+}
+
 .error {
   min-height: 16px;
   margin: 6px 2px 0;
