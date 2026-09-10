@@ -16,10 +16,9 @@ It calculates the rate, collects pickup details, then opens WhatsApp with a read
 
 ## Rates built in
 
-- £1 – £1,000 → 94 GMD  
-- £1,000 – £5,000 → 95 GMD  
-- £5,000 – £10,000 → 96 GMD  
-- £10,000 – £100,000 → 97 GMD  
+- £1 – £1,000 → 95 GMD  
+- £1,000 – £10,000 → 96 GMD  
+- £10,000 and above → 97 GMD  
 
 WhatsApp number used: `+44 7745 596993` (`07745596993`).
 

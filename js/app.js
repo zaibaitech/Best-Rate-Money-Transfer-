@@ -74,10 +74,9 @@
   }
 
   function rateFor(amount) {
-    if (amount <= 1000) return { rate: 94, band: "£1 – £1,000" };
-    if (amount <= 5000) return { rate: 95, band: "£1,000 – £5,000" };
-    if (amount <= 10000) return { rate: 96, band: "£5,000 – £10,000" };
-    return { rate: 97, band: "£10,000 – £100,000" };
+    if (amount <= 1000) return { rate: 95, band: "£1 – £1,000" };
+    if (amount <= 10000) return { rate: 96, band: "£1,000 – £10,000" };
+    return { rate: 97, band: "£10,000 and above" };
   }
 
   function renderTiles(container, items, getLabel, onSelect) {
